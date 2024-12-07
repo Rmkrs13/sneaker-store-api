@@ -11,7 +11,7 @@ const cors = require("cors");
 const connection = config.get("mongodb");
 mongoose.connect(connection);
 
-const messageRouter = require('./routes/api/v1/messages');
+const messageRouter = require('./routes/api/v1/orders');
 
 var app = express();
 
@@ -27,7 +27,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use("/api/v1/messages", messageRouter);
+app.use("/api/v1/orders", messageRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
