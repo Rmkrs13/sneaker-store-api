@@ -15,7 +15,12 @@ const authRoutes = require("./routes/api/v1/auth");
 
 const app = express();
 const server = http.createServer(app); // HTTP server for Socket.io
-const io = new Server(server); // Initialize Socket.io
+const io = new Server(server, {
+  cors: {
+    origin: "*", // Allow all origins, can be restricted to specific domains
+    methods: ["GET", "POST"],
+  },
+});
 
 // Environment Variables
 const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/sneakerslocal";
@@ -39,6 +44,11 @@ app.use(express.static(path.join(__dirname, "public")));
 // WebSocket: Emit live updates
 io.on("connection", (socket) => {
   console.log("Client connected:", socket.id);
+
+  // Example: Emit a message to the client
+  socket.emit("welcome", { message: "Welcome to the WebSocket server!" });
+
+  // Handle client disconnect
   socket.on("disconnect", () => console.log("Client disconnected:", socket.id));
 });
 
@@ -49,8 +59,8 @@ app.use((req, res, next) => {
 });
 
 // Routes
-app.use("/api/v1/orders", orderRoutes);
-app.use("/api/v1/auth", authRoutes); // Login, password reset, etc.
+app.use("/api/v1/orders", orderRoutes); // Order routes
+app.use("/api/v1/auth", authRoutes); // Authentication routes
 
 // Catch 404 and forward to error handler
 app.use((req, res, next) => {
