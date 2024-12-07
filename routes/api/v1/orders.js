@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const ordersController = require("../../../controllers/api/v1/orders");
-const authMiddleware = require("../../../middlewares/auth");
+const authMiddleware = require("../../../middleware/auth");
 
 // Orders routes
 router.post("/", ordersController.createOrder); // Public route to create an order
