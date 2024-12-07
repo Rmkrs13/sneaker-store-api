@@ -1,7 +1,3 @@
-# Environment variables
-.env
-config/
-
 # Dependency directories
 node_modules/
 
