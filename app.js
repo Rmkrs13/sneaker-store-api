@@ -13,8 +13,9 @@ const { Server } = require("socket.io");
 const orderRoutes = require("./routes/api/v1/orders");
 const authRoutes = require("./routes/api/v1/auth");
 
+// Initialize Express App
 const app = express();
-const server = http.createServer(app); // HTTP server for Socket.io
+const server = http.createServer(app); // Create HTTP server for WebSocket
 const io = new Server(server, {
   cors: {
     origin: "*", // Allow all origins, can be restricted to specific domains
@@ -25,7 +26,6 @@ const io = new Server(server, {
 // Environment Variables
 const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/sneakerslocal";
 const PORT = process.env.PORT || 3000;
-const JWT_SECRET = process.env.JWT_SECRET || "default_secret";
 
 // Connect to MongoDB
 mongoose
@@ -52,9 +52,9 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => console.log("Client disconnected:", socket.id));
 });
 
-// Socket.io Middleware to broadcast events
+// Attach io to req for broadcasting updates
 app.use((req, res, next) => {
-  req.io = io; // Attach io to req for broadcasting updates
+  req.io = io;
   next();
 });
 
@@ -79,7 +79,5 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start the server
-server.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+// Export app and server
+module.exports = { app, server };
