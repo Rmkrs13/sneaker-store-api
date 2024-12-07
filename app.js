@@ -1,48 +1,75 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+require("dotenv").config(); // Load environment variables from .env
 
-const mongoose = require('mongoose');
-const config = require("config");
+const express = require("express");
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
+const mongoose = require("mongoose");
 const cors = require("cors");
+const http = require("http");
+const { Server } = require("socket.io");
 
-const connection = config.get("mongodb");
-mongoose.connect(connection);
+// Import Routes
+const orderRoutes = require("./routes/api/v1/orders");
+const authRoutes = require("./routes/api/v1/auth");
 
-const messageRouter = require('./routes/api/v1/orders');
+const app = express();
+const server = http.createServer(app); // HTTP server for Socket.io
+const io = new Server(server); // Initialize Socket.io
 
-var app = express();
+// Environment Variables
+const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/sneakerslocal";
+const PORT = process.env.PORT || 3000;
+const JWT_SECRET = process.env.JWT_SECRET || "default_secret";
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+// Connect to MongoDB
+mongoose
+  .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.error("MongoDB connection error:", err));
 
+// Middleware
 app.use(cors());
-
-app.use(logger('dev'));
+app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/api/v1/orders", messageRouter);
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+// WebSocket: Emit live updates
+io.on("connection", (socket) => {
+  console.log("Client connected:", socket.id);
+  socket.on("disconnect", () => console.log("Client disconnected:", socket.id));
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+// Socket.io Middleware to broadcast events
+app.use((req, res, next) => {
+  req.io = io; // Attach io to req for broadcasting updates
+  next();
 });
 
-module.exports = app;
+// Routes
+app.use("/api/v1/orders", orderRoutes);
+app.use("/api/v1/auth", authRoutes); // Login, password reset, etc.
+
+// Catch 404 and forward to error handler
+app.use((req, res, next) => {
+  const err = new Error("Not Found");
+  err.status = 404;
+  next(err);
+});
+
+// Error handler
+app.use((err, req, res, next) => {
+  const status = err.status || 500;
+  res.status(status).json({
+    status: "fail",
+    message: err.message,
+    data: null,
+  });
+});
+
+// Start the server
+server.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
