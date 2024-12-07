@@ -1,5 +1,8 @@
 # Dependency directories
 node_modules/
 
+#Envirement config & secrets
+config/
+
 # System files
 .DS_Store
