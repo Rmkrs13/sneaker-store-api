@@ -1,7 +1,8 @@
 # Dependency directories
 node_modules/
 
-#Envirement config & secrets
+# Environment config & secrets
+.env
 config/
 
 # System files
