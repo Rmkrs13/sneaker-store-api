@@ -14,17 +14,16 @@ const orderRoutes = require("./routes/api/v1/orders");
 const authRoutes = require("./routes/api/v1/auth");
 
 const app = express();
-const server = http.createServer(app); // HTTP server for Socket.io
+const server = http.createServer(app); // Create HTTP server
 const io = new Server(server, {
   cors: {
-    origin: "*", // Allow all origins, can be restricted to specific domains
+    origin: "*", // Allow all origins, restrict in production
     methods: ["GET", "POST"],
   },
 });
 
 // Environment Variables
 const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/sneakerslocal";
-const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || "default_secret";
 
 // Connect to MongoDB
@@ -84,7 +83,5 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start the server
-server.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+// Export app and server
+module.exports = { app, server };
