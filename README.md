@@ -270,31 +270,6 @@ The API is built with Express.js, MongoDB, and Socket.io for real-time updates.
 
 ---
 
-## **Setup Instructions**
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/username/sneaker-configurator-api.git
-   cd sneaker-configurator-api
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Configure environment variables in `.env`:
-   ```env
-   MONGO_URI=your_mongodb_uri
-   JWT_SECRET=your_secret_key
-   PORT=3000
-   ```
-
-4. Start the server:
-   ```bash
-   npm start
-   ```
-
 ---
 
 ## **Deployment**
