@@ -23,13 +23,14 @@ exports.getOrderById = async (req, res, next) => {
 };
 
 exports.getAllOrders = async (req, res, next) => {
-  try {
-    const orders = await Order.find();
-    res.status(200).json({ status: "success", data: orders });
-  } catch (err) {
-    next(err);
-  }
-};
+    try {
+      const sortBy = req.query.sortby || "createdAt"; // Default sort by createdAt
+      const orders = await Order.find().sort({ [sortBy]: 1 }); // Sort ascending
+      res.status(200).json({ status: "success", data: orders });
+    } catch (err) {
+      next(err);
+    }
+  };
 
 exports.updateOrderStatus = async (req, res, next) => {
   try {

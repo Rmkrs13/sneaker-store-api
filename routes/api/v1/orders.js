@@ -3,7 +3,6 @@ const router = express.Router();
 const ordersController = require("../../../controllers/api/v1/orders");
 const authMiddleware = require("../../../middleware/auth");
 
-// Orders routes
 router.post("/", ordersController.createOrder); // Public route to create an order
 router.delete("/:id", authMiddleware, ordersController.deleteOrder); // Admin only
 router.put("/:id", authMiddleware, ordersController.updateOrderStatus); // Admin only
