@@ -24,17 +24,6 @@ const login = async (req, res) => {
   }
 };
 
-// Logout Route
-const logout = (req, res) => {
-    // Invalidate token on client-side by removing it
-    return res.json({
-      status: "success",
-      message: "Logged out successfully. Please clear your token on the client side.",
-    });
-  };
-  
-  module.exports = { login, changePassword, logout };
-
 // Change Password Route
 const changePassword = async (req, res) => {
   const { oldPassword, newPassword } = req.body;
@@ -50,21 +39,34 @@ const changePassword = async (req, res) => {
       return res.status(400).json({ status: "fail", message: "Old password is incorrect" });
     }
 
+    // Update the password field only
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(newPassword, salt);
 
     await Admin.updateOne({ _id: req.user.id }, { password: hashedPassword });
 
-    const newToken = jwt.sign({ id: admin._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    // Generate a new token
+    const newToken = jwt.sign({ id: admin._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
 
     return res.json({
       status: "success",
       message: "Password changed successfully",
-      token: newToken,
+      token: newToken, // Include the new token in the response
     });
   } catch (err) {
     return res.status(500).json({ status: "fail", message: err.message });
   }
 };
 
-module.exports = { login, changePassword };
+// Logout Route
+const logout = (req, res) => {
+  // Invalidate token on client-side by removing it
+  return res.json({
+    status: "success",
+    message: "Logged out successfully. Please clear your token on the client side.",
+  });
+};
+
+module.exports = { login, changePassword, logout };
