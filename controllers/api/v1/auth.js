@@ -26,27 +26,29 @@ const login = async (req, res) => {
 
 // Change Password Route
 const changePassword = async (req, res) => {
-  const { oldPassword, newPassword } = req.body;
-
-  try {
-    const admin = await Admin.findById(req.user.id);
-    if (!admin) {
-      return res.status(404).json({ status: "fail", message: "Admin not found" });
+    const { oldPassword, newPassword } = req.body;
+  
+    try {
+      const admin = await Admin.findById(req.user.id);
+      if (!admin) {
+        return res.status(404).json({ status: "fail", message: "Admin not found" });
+      }
+  
+      const isMatch = await bcrypt.compare(oldPassword, admin.password);
+      if (!isMatch) {
+        return res.status(400).json({ status: "fail", message: "Old password is incorrect" });
+      }
+  
+      // Update the password field only
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(newPassword, salt);
+  
+      await Admin.updateOne({ _id: req.user.id }, { password: hashedPassword });
+  
+      return res.json({ status: "success", message: "Password changed successfully" });
+    } catch (err) {
+      return res.status(500).json({ status: "fail", message: err.message });
     }
-
-    const isMatch = await bcrypt.compare(oldPassword, admin.password);
-    if (!isMatch) {
-      return res.status(400).json({ status: "fail", message: "Old password is incorrect" });
-    }
-
-    const salt = await bcrypt.genSalt(10);
-    admin.password = await bcrypt.hash(newPassword, salt);
-    await admin.save();
-
-    return res.json({ status: "success", message: "Password changed successfully" });
-  } catch (err) {
-    return res.status(500).json({ status: "fail", message: err.message });
-  }
-};
+  };
 
 module.exports = { login, changePassword };
