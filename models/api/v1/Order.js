@@ -25,7 +25,7 @@ const orderSchema = new mongoose.Schema(
       default: "Pending",
     },
   },
-  { timestamps: true } // Automatically adds `createdAt` and `updatedAt`
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("Order", orderSchema);

@@ -5,9 +5,9 @@ const authMiddleware = require("../../../middlewares/auth");
 
 // Orders routes
 router.post("/", ordersController.createOrder); // Public route to create an order
-router.get("/", authMiddleware, ordersController.getAllOrders); // Admin only: Get all orders
-router.get("/:id", authMiddleware, ordersController.getOrderById); // Admin only: Get a specific order
-router.patch("/:id", authMiddleware, ordersController.updateOrderStatus); // Admin only: Update order status
-router.delete("/:id", authMiddleware, ordersController.deleteOrder); // Admin only: Delete an order
+router.delete("/:id", authMiddleware, ordersController.deleteOrder); // Admin only
+router.put("/:id", authMiddleware, ordersController.updateOrderStatus); // Admin only
+router.get("/:id", authMiddleware, ordersController.getOrderById); // Admin only
+router.get("/", authMiddleware, ordersController.getAllOrders); // Admin only
 
 module.exports = router;
