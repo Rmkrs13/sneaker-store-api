@@ -45,7 +45,16 @@ const changePassword = async (req, res) => {
   
       await Admin.updateOne({ _id: req.user.id }, { password: hashedPassword });
   
-      return res.json({ status: "success", message: "Password changed successfully" });
+      // Generate a new token
+      const newToken = jwt.sign({ id: admin._id }, process.env.JWT_SECRET, {
+        expiresIn: "1h",
+      });
+  
+      return res.json({
+        status: "success",
+        message: "Password changed successfully",
+        token: newToken, // Include the new token in the response
+      });
     } catch (err) {
       return res.status(500).json({ status: "fail", message: err.message });
     }
