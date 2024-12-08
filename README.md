@@ -5,7 +5,7 @@
 
 ## **Overview**
 
-This is the Node.js API for the Sneaker Configurator project. It handles orders, authentication, and admin actions, allowing customers to place customized sneaker orders and admins to manage them. 
+This is the Node.js API for my 3D Sneaker Configurator school project. It handles orders, authentication, and admin actions, allowing customers to place customized sneaker orders and admins to manage them. 
 
 The API is built with Express.js, MongoDB, and Socket.io for real-time updates.
 
@@ -300,15 +300,3 @@ The API is built with Express.js, MongoDB, and Socket.io for real-time updates.
 ## **Deployment**
 - **Backend:** Hosted on Render.com.
 - **Database:** Hosted on MongoDB Atlas.
-
----
-
-## **Testing with Postman**
-
-1. Import the provided [Postman Collection](#).
-2. Set the `baseUrl` variable to: `https://api.sneaker-configurator.larslars.be`.
-3. Test each endpoint using the sample requests provided above.
-
----
-
-Let me know if you'd like a Postman Collection JSON file! 🎉
