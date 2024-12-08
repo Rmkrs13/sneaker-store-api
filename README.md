@@ -5,7 +5,7 @@
 
 ## **Overview**
 
-This is the Node.js API for my 3D Sneaker Configurator school project. It handles orders, authentication, and admin actions, allowing customers to place customized sneaker orders and admins to manage them. 
+This is the Node.js API for my 3D Sneaker Configurator school project. It handles orders, authentication, and admin actions, allowing customers to place customized sneaker orders and admins to manage them.
 
 The API is built with Express.js, MongoDB, and Socket.io for real-time updates.
 
@@ -22,7 +22,7 @@ The API is built with Express.js, MongoDB, and Socket.io for real-time updates.
 ### **Authentication**
 
 #### **1. POST `/api/v1/auth/login`**
-**Description:** Logs in an admin user and returns a JWT token.  
+**Description:** Logs in an admin user and returns a JWT token.
 
 - **Headers:**  
   `Content-Type: application/json`
@@ -53,8 +53,8 @@ The API is built with Express.js, MongoDB, and Socket.io for real-time updates.
 
 ---
 
-#### **2. POST `/api/v1/auth/change-password`**
-**Description:** Changes the admin's password. Requires a valid token.  
+#### **2. PUT `/api/v1/auth/change-password`**
+**Description:** Changes the admin's password. Requires a valid token.
 
 - **Headers:**  
   - `Authorization: Bearer <token>`  
@@ -73,7 +73,8 @@ The API is built with Express.js, MongoDB, and Socket.io for real-time updates.
   ```json
   {
     "status": "success",
-    "message": "Password changed successfully"
+    "message": "Password changed successfully",
+    "token": "new_jwt_token_here"
   }
   ```  
   **Fail:**  
@@ -86,10 +87,27 @@ The API is built with Express.js, MongoDB, and Socket.io for real-time updates.
 
 ---
 
+#### **3. POST `/api/v1/auth/logout`**
+**Description:** Logs out an admin user by invalidating the token on the client-side.
+
+- **Headers:**  
+  - `Authorization: Bearer <token>`
+
+- **Response:**  
+  **Success:**  
+  ```json
+  {
+    "status": "success",
+    "message": "Logged out successfully. Please clear your token on the client side."
+  }
+  ```
+
+---
+
 ### **Orders**
 
-#### **3. POST `/api/v1/orders`**
-**Description:** Creates a new sneaker order.  
+#### **4. POST `/api/v1/orders`**
+**Description:** Creates a new sneaker order.
 
 - **Headers:**  
   `Content-Type: application/json`
@@ -139,8 +157,8 @@ The API is built with Express.js, MongoDB, and Socket.io for real-time updates.
 
 ---
 
-#### **4. DELETE `/api/v1/orders/{id}`**
-**Description:** Deletes an order by ID. Requires admin authentication.  
+#### **5. DELETE `/api/v1/orders/{id}`**
+**Description:** Deletes an order by ID. Requires admin authentication.
 
 - **Headers:**  
   `Authorization: Bearer <token>`
@@ -163,8 +181,8 @@ The API is built with Express.js, MongoDB, and Socket.io for real-time updates.
 
 ---
 
-#### **5. PUT `/api/v1/orders/{id}`**
-**Description:** Updates the status of an order. Requires admin authentication.  
+#### **6. PUT `/api/v1/orders/{id}`**
+**Description:** Updates the status of an order. Requires admin authentication.
 
 - **Headers:**  
   `Authorization: Bearer <token>`  
@@ -191,8 +209,8 @@ The API is built with Express.js, MongoDB, and Socket.io for real-time updates.
 
 ---
 
-#### **6. GET `/api/v1/orders/{id}`**
-**Description:** Retrieves the details of a specific order by ID. Requires admin authentication.  
+#### **7. GET `/api/v1/orders/{id}`**
+**Description:** Retrieves the details of a specific order by ID. Requires admin authentication.
 
 - **Headers:**  
   `Authorization: Bearer <token>`
@@ -217,8 +235,8 @@ The API is built with Express.js, MongoDB, and Socket.io for real-time updates.
 
 ---
 
-#### **7. GET `/api/v1/orders`**
-**Description:** Retrieves all orders. Optionally sort by `date` or `votes`. Requires admin authentication.  
+#### **8. GET `/api/v1/orders`**
+**Description:** Retrieves all orders. Optionally sort by `date` or `votes`. Requires admin authentication.
 
 - **Headers:**  
   `Authorization: Bearer <token>`
@@ -247,8 +265,8 @@ The API is built with Express.js, MongoDB, and Socket.io for real-time updates.
 
 ## **WebSocket Integration**
 
-- When a new order is created, a WebSocket event is broadcasted to all connected clients.  
-  **Event Name:** `new_order`  
+- **New Order Event:**  
+  **Event Name:** `newOrder`  
   **Payload:**  
   ```json
   {
@@ -258,8 +276,8 @@ The API is built with Express.js, MongoDB, and Socket.io for real-time updates.
   }
   ```
 
-- When an order status is updated, a WebSocket event is broadcasted.  
-  **Event Name:** `order_updated`  
+- **Order Updated Event:**  
+  **Event Name:** `orderUpdated`  
   **Payload:**  
   ```json
   {
@@ -269,7 +287,6 @@ The API is built with Express.js, MongoDB, and Socket.io for real-time updates.
   ```
 
 ---
-
 
 ## **Deployment**
 - **Backend:** Hosted on Render.com.
