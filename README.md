@@ -270,7 +270,6 @@ The API is built with Express.js, MongoDB, and Socket.io for real-time updates.
 
 ---
 
----
 
 ## **Deployment**
 - **Backend:** Hosted on Render.com.
