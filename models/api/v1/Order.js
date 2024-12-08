@@ -16,7 +16,7 @@ const orderSchema = new mongoose.Schema(
       colors: {
         laces: { type: String, required: true },
         sole: { type: String, required: true },
-        body: { type: String, required: true },
+        inside: { type: String, required: true },
       },
     },
     status: {
