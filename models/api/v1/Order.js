@@ -1,31 +1,31 @@
 const mongoose = require("mongoose");
 
-const OrderSchema = new mongoose.Schema({
+const orderSchema = new mongoose.Schema(
+  {
     customer: {
-        name: String,
-        email: String,
-        phone: String,
-
-        adress: String,
-        city: String,
-        state: String,
-        zip: String,
-        country: String,
+      name: { type: String, required: true },
+      email: { type: String, required: true },
+      phone: { type: String, required: true },
+      address: { type: String, required: true },
+      city: { type: String, required: true },
+      zip: { type: Number, required: true },
+      country: { type: String, required: true },
     },
     shoeConfig: {
-        size: Number,
-        colors: {
-            laces: String,
-            sole: String,
-            body: String,
-        },
+      size: { type: Number, required: true },
+      colors: {
+        laces: { type: String, required: true },
+        sole: { type: String, required: true },
+        body: { type: String, required: true },
+      },
     },
     status: {
-        type: String,
-        enum: ["in production", "shipped", "cancelled"],
-        default: "in production",
+      type: String,
+      enum: ["Pending", "In Production", "Shipped"],
+      default: "Pending",
     },
-    createdAt: { type: Date, default: Date.now },
-});
+  },
+  { timestamps: true }
+);
 
-module.exports = mongoose.model("Order", OrderSchema);
+module.exports = mongoose.model("Order", orderSchema);

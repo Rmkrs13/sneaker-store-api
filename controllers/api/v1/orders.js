@@ -1,74 +1,105 @@
-const Order = require("../../../models/api/v1/Order");
-const io = require("../../../utils/socket"); // For WebSocket updates
+const Order = require("../../models/api/v1/Order");
 
 // Create a new order
-const createOrder = async (req, res) => {
-    try {
-        const order = new Order(req.body);
-        await order.save();
+exports.createOrder = async (req, res, next) => {
+  try {
+    const newOrder = await Order.create(req.body);
 
-        // Emit the new order to all connected clients
-        io.emit("newOrder", order);
-
-        res.status(201).json({ status: "success", data: order });
-    } catch (err) {
-        res.status(400).json({ status: "fail", message: err.message });
+    // Emit the new order event to all connected clients
+    if (req.io) {
+      req.io.emit("newOrder", newOrder);
     }
-};
 
-// Delete an order
-const deleteOrder = async (req, res) => {
-    try {
-        const order = await Order.findByIdAndDelete(req.params.id);
-        if (!order) {
-            return res.status(404).json({ status: "fail", message: "Order not found" });
-        }
-        res.json({ status: "success", message: "Order deleted", data: order });
-    } catch (err) {
-        res.status(400).json({ status: "fail", message: err.message });
-    }
-};
-
-// Update order status
-const updateOrderStatus = async (req, res) => {
-    try {
-        const updatedOrder = await Order.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        if (!updatedOrder) {
-            return res.status(404).json({ status: "fail", message: "Order not found" });
-        }
-        res.json({ status: "success", data: updatedOrder });
-    } catch (err) {
-        res.status(400).json({ status: "fail", message: err.message });
-    }
-};
-
-// Get a single order
-const getOrderById = async (req, res) => {
-    try {
-        const order = await Order.findById(req.params.id);
-        if (!order) {
-            return res.status(404).json({ status: "fail", message: "Order not found" });
-        }
-        res.json({ status: "success", data: order });
-    } catch (err) {
-        res.status(400).json({ status: "fail", message: err.message });
-    }
+    res.status(201).json({
+      status: "success",
+      message: "Order created successfully",
+      data: newOrder,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 // Get all orders
-const getAllOrders = async (req, res) => {
-    try {
-        const orders = await Order.find();
-        res.json({ status: "success", data: orders });
-    } catch (err) {
-        res.status(400).json({ status: "fail", message: err.message });
-    }
+exports.getAllOrders = async (req, res, next) => {
+  try {
+    const orders = await Order.find().sort(req.query.sortby || "-createdAt");
+    res.status(200).json({
+      status: "success",
+      message: "Orders retrieved successfully",
+      data: orders,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
-module.exports = {
-    createOrder,
-    deleteOrder,
-    updateOrderStatus,
-    getOrderById,
-    getAllOrders,
+// Get a single order
+exports.getOrderById = async (req, res, next) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Order not found",
+        data: null,
+      });
+    }
+    res.status(200).json({
+      status: "success",
+      message: "Order retrieved successfully",
+      data: order,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Update order status
+exports.updateOrderStatus = async (req, res, next) => {
+  try {
+    const order = await Order.findByIdAndUpdate(
+      req.params.id,
+      { status: req.body.status },
+      { new: true, runValidators: true }
+    );
+
+    if (!order) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Order not found",
+        data: null,
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      message: "Order status updated successfully",
+      data: order,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Delete an order
+exports.deleteOrder = async (req, res, next) => {
+  try {
+    const order = await Order.findByIdAndDelete(req.params.id);
+    if (!order) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Order not found",
+        data: null,
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      message: "Order deleted successfully",
+      data: null,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
