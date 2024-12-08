@@ -21,11 +21,11 @@ const orderSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Pending", "In Production", "Shipped"],
+      enum: ["Pending", "In Production", "Shipped", "Delivered"],
       default: "Pending",
     },
   },
-  { timestamps: true }
+  { timestamps: true } // Automatically adds `createdAt` and `updatedAt`
 );
 
 module.exports = mongoose.model("Order", orderSchema);
