@@ -1,17 +1,23 @@
 const mongoose = require("mongoose");
 
 const OrderSchema = new mongoose.Schema({
-    user: {
+    customer: {
         name: String,
         email: String,
         phone: String,
+
+        adress: String,
+        city: String,
+        state: String,
+        zip: String,
+        country: String,
     },
     shoeConfig: {
         size: Number,
         colors: {
             laces: String,
             sole: String,
-            extras: String,
+            body: String,
         },
     },
     status: {
